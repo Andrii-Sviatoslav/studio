@@ -47,6 +47,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from '@/lib/utils';
+import { useToast } from "@/hooks/use-toast";
 
 const transactions = [
   {
@@ -96,20 +97,34 @@ const sendAgainUsers = [
   { name: 'Clara', src: 'https://placehold.co/100x100.png', fallback: 'C' }
 ];
 
-const QuickActionDialog = ({ trigger, title, description, children }: { trigger: React.ReactNode, title: string, description: string, children: React.ReactNode }) => (
-  <Dialog>
-    <DialogTrigger asChild>
-      {trigger}
-    </DialogTrigger>
-    <DialogContent className="sm:max-w-[425px]">
-      <DialogHeader>
-        <DialogTitle>{title}</DialogTitle>
-        <DialogDescription>{description}</DialogDescription>
-      </DialogHeader>
-      {children}
-    </DialogContent>
-  </Dialog>
-);
+const QuickActionDialog = ({ trigger, title, description, children, onConfirm }: { trigger: React.ReactNode, title: string, description: string, children: React.ReactNode, onConfirm?: () => void }) => {
+  const [isOpen, setIsOpen] = React.useState(false);
+
+  const handleConfirm = () => {
+    if (onConfirm) {
+      onConfirm();
+    }
+    setIsOpen(false);
+  }
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        {trigger}
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
+        </DialogHeader>
+        {children}
+         <DialogFooter>
+            <Button onClick={handleConfirm}>Send Payment</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+};
 
 
 export default function DashboardPage() {
@@ -117,6 +132,14 @@ export default function DashboardPage() {
         from: addDays(new Date(), -7),
         to: new Date(),
     });
+    const { toast } = useToast();
+
+    const handleAction = (title: string) => {
+      toast({
+        title: "Action Complete",
+        description: `${title} request has been submitted.`,
+      })
+    }
 
   return (
     <div className="space-y-8">
@@ -143,6 +166,7 @@ export default function DashboardPage() {
               }
               title="Send Money"
               description="Enter the details of the recipient and the amount to send."
+              onConfirm={() => handleAction("Send Money")}
             >
               <div className="grid gap-4 py-4">
                 <div className="grid grid-cols-4 items-center gap-4">
@@ -154,9 +178,6 @@ export default function DashboardPage() {
                   <Input id="amount-send" type="number" placeholder="$50.00" className="col-span-3" />
                 </div>
               </div>
-              <DialogFooter>
-                <Button type="submit">Send Payment</Button>
-              </DialogFooter>
             </QuickActionDialog>
 
             <QuickActionDialog
@@ -168,6 +189,7 @@ export default function DashboardPage() {
               }
               title="Receive Money"
               description="Share your QR code or payment link to receive money."
+              onConfirm={() => handleAction("Receive Money")}
             >
               <div className="flex flex-col items-center justify-center gap-4 py-4">
                 <div className="p-4 bg-white rounded-lg">
@@ -187,6 +209,7 @@ export default function DashboardPage() {
               }
               title="Apply for a Loan"
               description="Fill in the details to apply for a new loan."
+              onConfirm={() => handleAction("Loan Application")}
             >
               <div className="grid gap-4 py-4">
                 <div className="grid grid-cols-4 items-center gap-4">
@@ -198,9 +221,6 @@ export default function DashboardPage() {
                   <Input id="purpose" placeholder="e.g., Car Purchase" className="col-span-3" />
                 </div>
               </div>
-              <DialogFooter>
-                <Button type="submit">Submit Application</Button>
-              </DialogFooter>
             </QuickActionDialog>
 
             <QuickActionDialog
@@ -212,6 +232,7 @@ export default function DashboardPage() {
               }
               title="Top-up Wallet"
               description="Add money to your Apex Finance wallet."
+              onConfirm={() => handleAction("Top-up")}
             >
               <div className="grid gap-4 py-4">
                 <div className="grid grid-cols-4 items-center gap-4">
@@ -219,9 +240,6 @@ export default function DashboardPage() {
                   <Input id="amount-topup" type="number" placeholder="$100" className="col-span-3" />
                 </div>
               </div>
-              <DialogFooter>
-                <Button type="submit">Add Funds</Button>
-              </DialogFooter>
             </QuickActionDialog>
           </CardContent>
         </Card>
@@ -245,6 +263,7 @@ export default function DashboardPage() {
                   }
                   title={`Send Money to ${user.name}`}
                   description={`You are about to send money to ${user.name}.`}
+                  onConfirm={() => handleAction(`Send Money to ${user.name}`)}
                 >
                     <div className="grid gap-4 py-4">
                         <div className="grid grid-cols-4 items-center gap-4">
@@ -252,9 +271,6 @@ export default function DashboardPage() {
                         <Input id="amount-send-again" type="number" placeholder="$20.00" className="col-span-3" />
                         </div>
                     </div>
-                    <DialogFooter>
-                        <Button type="submit">Send Payment</Button>
-                    </DialogFooter>
                 </QuickActionDialog>
             ))}
              <QuickActionDialog
@@ -268,6 +284,7 @@ export default function DashboardPage() {
                   }
                   title="Send Money to New Recipient"
                   description="Enter the details of the recipient and the amount to send."
+                  onConfirm={() => handleAction("Send Money to New Recipient")}
                 >
                     <div className="grid gap-4 py-4">
                          <div className="grid grid-cols-4 items-center gap-4">
@@ -279,9 +296,6 @@ export default function DashboardPage() {
                         <Input id="amount-send-new" type="number" placeholder="$20.00" className="col-span-3" />
                         </div>
                     </div>
-                    <DialogFooter>
-                        <Button type="submit">Send Payment</Button>
-                    </DialogFooter>
                 </QuickActionDialog>
           </CardContent>
         </Card>
