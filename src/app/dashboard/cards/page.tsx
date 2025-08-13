@@ -27,7 +27,7 @@ const cards = [
   {
     id: 1,
     bank: "Apex Bank",
-    number: "**** **** **** 1234",
+    number: "4123 4567 8901 2345",
     expiry: "12/26",
     holder: "Alex Doe",
     balance: 5750.2,
@@ -37,7 +37,7 @@ const cards = [
   {
     id: 2,
     bank: "Prestige Bank",
-    number: "**** **** **** 5678",
+    number: "5555 6666 7777 8888",
     expiry: "08/25",
     holder: "Alex Doe",
     balance: 12340.0,
