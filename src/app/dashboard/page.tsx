@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
 import { addDays, format } from 'date-fns';
-import { Calendar as CalendarIcon, Eye, ArrowUpRight, ArrowDownLeft, Landmark, PlusCircle } from 'lucide-react';
+import { Calendar as CalendarIcon, Eye, ArrowUpRight, ArrowDownLeft, Landmark, PlusCircle, QrCode } from 'lucide-react';
 import { DateRange } from 'react-day-picker';
 import {
   Card,
@@ -34,15 +34,19 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from '@/lib/utils';
-
-const quickActions = [
-  { icon: ArrowUpRight, label: 'Send' },
-  { icon: ArrowDownLeft, label: 'Receive' },
-  { icon: Landmark, label: 'Loan' },
-  { icon: PlusCircle, label: 'Topup' },
-];
 
 const transactions = [
   {
@@ -86,6 +90,28 @@ const chartConfig: ChartConfig = {
   },
 };
 
+const sendAgainUsers = [
+  { name: 'Anna', src: 'https://placehold.co/100x100.png', fallback: 'A' },
+  { name: 'Ben', src: 'https://placehold.co/100x100.png', fallback: 'B' },
+  { name: 'Clara', src: 'https://placehold.co/100x100.png', fallback: 'C' }
+];
+
+const QuickActionDialog = ({ trigger, title, description, children }: { trigger: React.ReactNode, title: string, description: string, children: React.ReactNode }) => (
+  <Dialog>
+    <DialogTrigger asChild>
+      {trigger}
+    </DialogTrigger>
+    <DialogContent className="sm:max-w-[425px]">
+      <DialogHeader>
+        <DialogTitle>{title}</DialogTitle>
+        <DialogDescription>{description}</DialogDescription>
+      </DialogHeader>
+      {children}
+    </DialogContent>
+  </Dialog>
+);
+
+
 export default function DashboardPage() {
     const [date, setDate] = React.useState<DateRange | undefined>({
         from: addDays(new Date(), -7),
@@ -108,12 +134,95 @@ export default function DashboardPage() {
             </Button>
           </CardHeader>
           <CardContent className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            {quickActions.map((action) => (
-              <Button key={action.label} variant="outline" className="flex flex-col h-24 gap-2">
-                <action.icon className="h-6 w-6 text-primary" />
-                <span>{action.label}</span>
-              </Button>
-            ))}
+            <QuickActionDialog
+              trigger={
+                <Button variant="outline" className="flex flex-col h-24 gap-2">
+                  <ArrowUpRight className="h-6 w-6 text-primary" />
+                  <span>Send</span>
+                </Button>
+              }
+              title="Send Money"
+              description="Enter the details of the recipient and the amount to send."
+            >
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="recipient" className="text-right">Recipient</Label>
+                  <Input id="recipient" placeholder="name@example.com" className="col-span-3" />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="amount-send" className="text-right">Amount</Label>
+                  <Input id="amount-send" type="number" placeholder="$50.00" className="col-span-3" />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button type="submit">Send Payment</Button>
+              </DialogFooter>
+            </QuickActionDialog>
+
+            <QuickActionDialog
+              trigger={
+                <Button variant="outline" className="flex flex-col h-24 gap-2">
+                  <ArrowDownLeft className="h-6 w-6 text-primary" />
+                  <span>Receive</span>
+                </Button>
+              }
+              title="Receive Money"
+              description="Share your QR code or payment link to receive money."
+            >
+              <div className="flex flex-col items-center justify-center gap-4 py-4">
+                <div className="p-4 bg-white rounded-lg">
+                  <QrCode className="h-32 w-32" />
+                </div>
+                <Input readOnly value="https://apex.finance/pay/alex-doe" />
+                <Button>Copy Link</Button>
+              </div>
+            </QuickActionDialog>
+            
+            <QuickActionDialog
+              trigger={
+                 <Button variant="outline" className="flex flex-col h-24 gap-2">
+                    <Landmark className="h-6 w-6 text-primary" />
+                    <span>Loan</span>
+                </Button>
+              }
+              title="Apply for a Loan"
+              description="Fill in the details to apply for a new loan."
+            >
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="amount-loan" className="text-right">Amount</Label>
+                  <Input id="amount-loan" type="number" placeholder="$5000" className="col-span-3" />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="purpose" className="text-right">Purpose</Label>
+                  <Input id="purpose" placeholder="e.g., Car Purchase" className="col-span-3" />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button type="submit">Submit Application</Button>
+              </DialogFooter>
+            </QuickActionDialog>
+
+            <QuickActionDialog
+              trigger={
+                <Button variant="outline" className="flex flex-col h-24 gap-2">
+                    <PlusCircle className="h-6 w-6 text-primary" />
+                    <span>Topup</span>
+                </Button>
+              }
+              title="Top-up Wallet"
+              description="Add money to your Apex Finance wallet."
+            >
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="amount-topup" className="text-right">Amount</Label>
+                  <Input id="amount-topup" type="number" placeholder="$100" className="col-span-3" />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button type="submit">Add Funds</Button>
+              </DialogFooter>
+            </QuickActionDialog>
           </CardContent>
         </Card>
         
@@ -122,18 +231,32 @@ export default function DashboardPage() {
             <CardTitle>Send Again</CardTitle>
           </CardHeader>
           <CardContent className="flex items-center justify-around">
-              <Avatar className="h-16 w-16">
-                  <Image src="https://placehold.co/100x100.png" alt="User 1" width={64} height={64} data-ai-hint="person" />
-                  <AvatarFallback>U1</AvatarFallback>
-              </Avatar>
-              <Avatar className="h-16 w-16">
-                  <Image src="https://placehold.co/100x100.png" alt="User 2" width={64} height={64} data-ai-hint="person" />
-                  <AvatarFallback>U2</AvatarFallback>
-              </Avatar>
-              <Avatar className="h-16 w-16">
-                  <Image src="https://placehold.co/100x100.png" alt="User 3" width={64} height={64} data-ai-hint="person" />
-                  <AvatarFallback>U3</AvatarFallback>
-              </Avatar>
+            {sendAgainUsers.map((user) => (
+                <QuickActionDialog
+                  key={user.name}
+                  trigger={
+                     <button className="flex flex-col items-center gap-2 text-sm font-medium">
+                        <Avatar className="h-16 w-16">
+                            <Image src={user.src} alt={user.name} width={64} height={64} data-ai-hint="person" />
+                            <AvatarFallback>{user.fallback}</AvatarFallback>
+                        </Avatar>
+                        <span>{user.name}</span>
+                    </button>
+                  }
+                  title={`Send Money to ${user.name}`}
+                  description={`You are about to send money to ${user.name}.`}
+                >
+                    <div className="grid gap-4 py-4">
+                        <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="amount-send-again" className="text-right">Amount</Label>
+                        <Input id="amount-send-again" type="number" placeholder="$20.00" className="col-span-3" />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button type="submit">Send Payment</Button>
+                    </DialogFooter>
+                </QuickActionDialog>
+            ))}
           </CardContent>
         </Card>
       </div>
