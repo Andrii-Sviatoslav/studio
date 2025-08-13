@@ -257,6 +257,32 @@ export default function DashboardPage() {
                     </DialogFooter>
                 </QuickActionDialog>
             ))}
+             <QuickActionDialog
+                  trigger={
+                     <button className="flex flex-col items-center gap-2 text-sm font-medium">
+                        <Avatar className="h-16 w-16 flex items-center justify-center bg-muted">
+                            <PlusCircle className="h-8 w-8 text-muted-foreground" />
+                        </Avatar>
+                        <span>New</span>
+                    </button>
+                  }
+                  title="Send Money to New Recipient"
+                  description="Enter the details of the recipient and the amount to send."
+                >
+                    <div className="grid gap-4 py-4">
+                         <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="recipient-new" className="text-right">Recipient</Label>
+                            <Input id="recipient-new" placeholder="name@example.com" className="col-span-3" />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="amount-send-new" className="text-right">Amount</Label>
+                        <Input id="amount-send-new" type="number" placeholder="$20.00" className="col-span-3" />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button type="submit">Send Payment</Button>
+                    </DialogFooter>
+                </QuickActionDialog>
           </CardContent>
         </Card>
       </div>
