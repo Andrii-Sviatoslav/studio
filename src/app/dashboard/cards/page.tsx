@@ -78,6 +78,15 @@ export default function CardsPage() {
                       data-ai-hint="logo card"
                     />
                   </div>
+                  <div className="w-10">
+                     <Image
+                      src="https://placehold.co/40x32.png"
+                      alt="Card chip"
+                      width={40}
+                      height={32}
+                      data-ai-hint="card chip"
+                    />
+                  </div>
                   <div>
                     <p className="text-2xl font-mono tracking-widest">{card.number}</p>
                     <div className="flex justify-between text-sm mt-4">
