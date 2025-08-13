@@ -25,6 +25,8 @@ import {
   LogOut,
   ArrowRightLeft,
   Loader2,
+  Wallet,
+  Target,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -43,6 +45,8 @@ const navItems = [
   { href: "/dashboard", icon: LayoutGrid, label: "Dashboard" },
   { href: "/dashboard/transactions", icon: ArrowRightLeft, label: "Transactions" },
   { href: "/dashboard/cards", icon: CreditCard, label: "Cards" },
+  { href: "/dashboard/budgets", icon: Wallet, label: "Budgets" },
+  { href: "/dashboard/goals", icon: Target, label: "Goals" },
   { href: "/dashboard/account", icon: UserIcon, label: "Account" },
 ];
 
